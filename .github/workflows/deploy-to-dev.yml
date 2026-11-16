@@ -14,7 +14,6 @@ jobs:
   deploy:
     name: Deploy to DEV Sandbox
     runs-on: ubuntu-latest
-
     environment: development
 
     steps:
@@ -26,7 +25,7 @@ jobs:
 
       - name: Authenticate with DEV Sandbox
         run: |
-          echo "${{ secrets.SF_AUTH_URL }}" | sf org login sfdx-url --sfdx-url-stdin --alias CI-DEV
+          echo "${{ secrets.SF_AUTH_URL }}" | sf org login sfdx-url --alias=CI-DEV --sfdx-url-stdin
 
       - name: Deploy metadata and run Apex tests
         run: |
