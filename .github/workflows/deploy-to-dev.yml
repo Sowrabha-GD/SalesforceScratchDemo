@@ -1,0 +1,36 @@
+
+name: Deploy to Developer Sandbox
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to DEV Sandbox
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Salesforce CLI
+        run: npm install --global @salesforce/cli
+
+      - name: Authenticate with DEV Sandbox
+        run: |
+          echo "${{ secrets.SF_AUTH_URL }}" | sf org login sfdx-url --alias=CI-DEV --sfdx-url-stdin
+
+      - name: Deploy metadata and run Apex tests
+        run: |
+          sf project deploy start \
+            --source-dir force-app \
+            --target-org CI-DEV \
+            --test-level RunLocalTests \
+            --wait 30
